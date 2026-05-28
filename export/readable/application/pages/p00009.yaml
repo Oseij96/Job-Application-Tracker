@@ -1,0 +1,244 @@
+---
+# ====== Page: Interviews ====================================
+id: 9
+identification: 
+  name: Interviews
+  alias: INTERVIEWS
+  title: Interviews
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+css: 
+  inline: |
+    .t-Report-wrap,
+    .t-Report,
+    .a-IRR-tableContainer {
+        overflow-x: auto;
+        display: block;
+        width: 100%;
+    }
+    
+    .t-Report-report,
+    .a-IRR-table {
+        min-width: 700px;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Breadcrumb ==================================
+  id: 16432848212378200
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 15924855749980937
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Interviews ==================================
+  id: 16459056760820606
+  identification: 
+    name: Interviews
+    type: Cards
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          i.id,
+          u.first_name || ' ' || u.last_name AS user_name,
+          ja.role_title,
+          c.name AS company,
+          i.interview_date,
+          i.stage,
+          i.result,
+          i.feedback,
+          i.interviewer_name AS interviewer,
+      
+          CASE i.result
+              WHEN 'Passed' THEN 'u-color-5'
+              WHEN 'Failed' THEN 'u-color-14'
+              WHEN 'Pending' THEN 'u-color-8'
+              WHEN 'Cancelled' THEN 'u-color-1'
+          END AS badge_class
+      
+      FROM interviews i
+      JOIN job_applications ja
+          ON i.application_id = ja.id
+      JOIN companies c
+          ON ja.company_id = c.id
+      JOIN users u
+          ON ja.user_id = u.id
+      ORDER BY i.interview_date DESC
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Cards Container
+    template-options: 
+    - '#DEFAULT#'
+    - t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 16459191322820607
+    appearance: 
+      layout: Grid
+      grid-columns: Auto
+
+    card: 
+      primary-key-column-1: ID
+
+    title: 
+      advanced-formatting: false
+      column: STAGE
+
+    subtitle: 
+      advanced-formatting: false
+      column: COMPANY
+
+    body: 
+      advanced-formatting: false
+      column: USER_NAME
+
+    secondary-body: 
+      advanced-formatting: false
+      column: INTERVIEWER
+
+    icon-and-badge: 
+      icon-source: Initials
+      icon-column: STAGE
+      icon-position: Start
+      badge-column: RESULT
+      badge-css-classes: 
+      - '&BADGE_CLASS.'
+
+    media: 
+      advanced-formatting: false
+      source: No Media
+
+    performance: 
+      lazy-loading: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+buttons: 
+- # ====== Button: CREATE ======================================
+  id: 16431216894378196
+  identification: 
+    button-name: CREATE
+    label: Create
+
+  layout: 
+    sequence: 10
+    region: Interviews # 16459056760820606
+    slot: ABOVE_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - u-margin-bottom-md
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:10:&APP_SESSION.::&DEBUG.:10::'
+      page: 10 # Add/Edit Interview
+      clear-cache: 10
+
+    warn-on-unsaved-changes: Do Not Check
+

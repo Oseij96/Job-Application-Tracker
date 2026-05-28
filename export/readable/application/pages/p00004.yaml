@@ -1,0 +1,362 @@
+---
+# ====== Page: Pipeline ======================================
+id: 4
+identification: 
+  name: Pipeline
+  alias: PIPELINE
+  title: Pipeline
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Breadcrumb ==================================
+  id: 16319865173285817
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 15924855749980937
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Application Pipeline ========================
+  id: 16320568898285824
+  identification: 
+    name: Application Pipeline
+    type: Cards
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          ja.id,
+          ja.role_title,
+          ja.status,
+          ja.applied_date,
+          ja.salary,
+          c.name AS company_name,
+          u.first_name || ' ' || u.last_name AS user_name,
+      
+          CASE ja.status
+              WHEN 'Applied' THEN 'u-color-1'
+              WHEN 'Interview' THEN 'u-color-8'
+              WHEN 'Offer' THEN 'u-color-4'
+              WHEN 'Accepted' THEN 'u-color-5'
+              WHEN 'Rejected' THEN 'u-color-14'
+          END AS badge_class
+      
+      FROM job_applications ja
+      JOIN companies c
+          ON ja.company_id = c.id
+      JOIN users u
+          ON ja.user_id = u.id
+      WHERE :P4_STATUS_FILTER IS NULL
+          OR ja.status = :P4_STATUS_FILTER
+      ORDER BY ja.applied_date DESC;
+
+  order-by: 
+    type: Item
+    item: 
+      item-name: P4_ORDER_BY
+      order-bys: 
+      - key: ROLE_TITLE
+        clause: '"ROLE_TITLE" asc'
+
+      - key: STATUS
+        clause: '"STATUS" asc'
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Cards Container
+    template-options: 
+    - '#DEFAULT#'
+    - t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 16321021233285828
+    appearance: 
+      layout: Grid
+      grid-columns: Auto
+
+    title: 
+      advanced-formatting: false
+      column: ROLE_TITLE
+
+    subtitle: 
+      advanced-formatting: false
+      column: COMPANY_NAME
+
+    body: 
+      advanced-formatting: false
+      column: STATUS
+
+    secondary-body: 
+      advanced-formatting: false
+      column: USER_NAME
+
+    icon-and-badge: 
+      icon-source: Initials
+      icon-column: ROLE_TITLE
+      icon-position: Start
+      badge-column: STATUS
+      badge-css-classes: 
+      - '&BADGE_CLASS.'
+
+    media: 
+      advanced-formatting: false
+      source: No Media
+
+    performance: 
+      lazy-loading: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    actions: 
+    - # ====== Action: Edit ========================================
+      id: 16338725884013748
+      identification: 
+        type: Button
+        label: Edit
+
+      layout: 
+        position: Primary
+        sequence: 10
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:3:&SESSION.::&DEBUG.:3:P3_ID:&ID.#ID#'
+          page: 3 # Form
+          clear-cache: 3
+          values: 
+            p3_id: '&ID.#ID#'
+
+      appearance: 
+        display-type: Text
+        hot: false
+
+page-items: 
+- # ====== Page Item: P4_STATUS_FILTER =========================
+  id: 10216999953650824
+  identification: 
+    name: P4_STATUS_FILTER
+    type: Select List
+
+  label: 
+    label: Filter by Status
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: Submit Page
+    execute-validations: true
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Application Pipeline # 16320568898285824
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT 'All Statuses' AS display_value, NULL AS return_value
+      UNION ALL
+      SELECT 'Applied', 'Applied'
+      UNION ALL
+      SELECT 'Interview', 'Interview'
+      UNION ALL
+      SELECT 'Rejected', 'Rejected'
+      UNION ALL
+      SELECT 'Offer', 'Offer'
+      UNION ALL
+      SELECT 'Accepted', 'Accepted'
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-- Select status --'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P4_ORDER_BY ==============================
+  id: 16321589428285833
+  identification: 
+    name: P4_ORDER_BY
+    type: Select List
+
+  label: 
+    label: Order By
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Application Pipeline # 16320568898285824
+    slot: ORDER_BY_ITEM
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: true
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC2:Role Title;ROLE_TITLE,Status;STATUS'
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: ROLE_TITLE
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
