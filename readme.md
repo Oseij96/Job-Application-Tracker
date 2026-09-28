@@ -1,6 +1,6 @@
 # Job Application Tracker
 
-A full-stack job application management system built with Oracle APEX and PL/SQL that allows users to track job applications, manage interviews, monitor application stages, and maintain application history through an interactive workflow pipeline.
+A job application management system built with Oracle APEX, Oracle SQL and PL/SQL. The application allows users to track job applications, manage interviews, monitor application stages and maintain a history of status changes.
 
 ### Live Demo
 
@@ -19,7 +19,7 @@ https://gca2c3439af01cb-myappdb.adb.uk-london-1.oraclecloudapps.com/ords/r/myapp
 * Interactive cards and reports
 * Form validation using PL/SQL
 * Trigger-based history logging
-* Clean and responsive Oracle APEX UI
+* Responsive Oracle APEX UI
 
 ---
 
@@ -30,7 +30,7 @@ https://gca2c3439af01cb-myappdb.adb.uk-london-1.oraclecloudapps.com/ords/r/myapp
 * PL/SQL
 * Oracle Database
 * Database Triggers
-* PL/SQL Packages & Procedures
+* PL/SQL Packages, Procedures and Functions
 * Interactive Reports
 * Cards Regions
 * Form Processing (DML)
@@ -61,29 +61,52 @@ https://gca2c3439af01cb-myappdb.adb.uk-london-1.oraclecloudapps.com/ords/r/myapp
 ### Job Application Workflow
 
 1. Create a new job application
-2. Application appears in the pipeline
-3. Update application status
+2. The application appears in the pipeline
+3. Update the application status
 4. Selecting "Interview" redirects to interview creation
 5. Interview details are stored and tracked
-6. Status changes are automatically logged
+6. Status changes are automatically logged in application history
 
 ---
 
 ## PL/SQL Features
 
-### Package Functions
+### `JOB_APP_PKG`
 
-Custom validation logic including:
+The application uses a PL/SQL package to handle application logic and validation.
 
-* Status validation
+The package contains:
+
+* Application status validation
 * Application ID validation
-* Company validation
+* Company name validation
 * Role title validation
-* Date validation
+* Date applied validation
+* A procedure for validating and updating an application's status
 
-### Database Trigger
+### `TRG_APPLICATION_HISTORY`
 
-A trigger automatically inserts records into `APPLICATION_HISTORY` whenever an application's status changes.
+A database trigger automatically inserts a record into `APPLICATION_HISTORY` whenever the status of a job application changes.
+
+This separates the status update logic from the history logging: the package performs the validated update, while the trigger records the resulting status change.
+
+---
+
+## Project Structure
+
+The repository includes:
+
+* Database schema creation scripts
+* PL/SQL package specification and body
+* Application history trigger
+* Sample data
+* Oracle APEX application exports
+* Application screenshots
+
+The `export` directory contains:
+
+* `f101.sql` — complete Oracle APEX application export
+* `f101/` — split application export containing individual APEX components for source control
 
 ---
 
@@ -107,9 +130,9 @@ A trigger automatically inserts records into `APPLICATION_HISTORY` whenever an a
 
 ### Add Application Form
 
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/add_application.png)
 
-### Interview Tracking Smaller Screens
+### Interview Tracking - Smaller Screens
 
 ![Mobile Interview](screenshots/interview_small.png)
 
@@ -117,13 +140,13 @@ A trigger automatically inserts records into `APPLICATION_HISTORY` whenever an a
 
 ## Future Improvements
 
-* User authentication and authorization
+* Role-based authorization
 * Dashboard analytics
 * Email reminders
 * Calendar integration
 * Advanced filtering and search
 * Resume uploads
-* Interview feedback system
+* Expanded interview feedback features
 
 ---
 
@@ -136,10 +159,13 @@ A trigger automatically inserts records into `APPLICATION_HISTORY` whenever an a
 
 ### Setup
 
-1. Import the exported Oracle APEX application
-2. Run the database schema scripts
-3. Insert sample data if required
-4. Launch the application
+1. Run the database schema creation script
+2. Create the PL/SQL package and application history trigger
+3. Insert the sample data if required
+4. Import `export/f101.sql` into Oracle APEX
+5. Run the application
+
+The split export under `export/f101/` is also included for source control and component-level tracking.
 
 ---
 
