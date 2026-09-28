@@ -1,8 +1,8 @@
 -- 1. INSERT SAMPLE USERS 
-INSERT INTO users (first_name, last_name, email, password_hash) 
-VALUES ('Alex', 'Morgan', 'alex.morgan@email.com', STANDARD_HASH('apple1', 'SHA256')),
-       ('Taylor', 'Swift', 'taylor.s@email.com', STANDARD_HASH('orange2', 'SHA256')),
-       ('Jordan', 'Lee', 'jordan.lee@email.com', STANDARD_HASH('banana3', 'SHA256'));
+INSERT INTO users (first_name, last_name, email) 
+VALUES ('Alex', 'Morgan', 'alex.morgan@email.com'),
+       ('Taylor', 'Swift', 'taylor.s@email.com'),
+       ('Jordan', 'Lee', 'jordan.lee@email.com');
 
 
 -- 2. INSERT SAMPLE COMPANIES
