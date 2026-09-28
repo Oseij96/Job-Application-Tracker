@@ -3,7 +3,6 @@ CREATE TABLE users(
     first_name VARCHAR2(100) NOT NULL,
     last_name VARCHAR2(100) NOT NULL,
     email VARCHAR2(255) UNIQUE NOT NULL,
-    password_hash VARCHAR2(255) NOT NULL,
     created_at DATE DEFAULT SYSDATE
 );
 
