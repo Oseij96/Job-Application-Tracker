@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE BODY JOB_APP_PKG AS
+create or replace PACKAGE BODY JOB_APP_PKG AS
 
     PROCEDURE UPDATE_APPLICATION_STATUS(
         P_APPLICATION_ID NUMBER,
@@ -19,19 +19,24 @@ CREATE OR REPLACE PACKAGE BODY JOB_APP_PKG AS
 
         IF V_STATUS != V_VALID_STATUS THEN
 
-            INSERT INTO APPLICATION_HISTORY (
-                APPLICATION_ID,
-                OLD_STATUS,
-                NEW_STATUS
-            )
-            VALUES (
-                V_VALID_APPLICATION_ID,
-                V_STATUS,
-                V_VALID_STATUS
-            );
+        UPDATE JOB_APPLICATIONS
+        SET STATUS = V_VALID_STATUS
+        WHERE ID = V_VALID_APPLICATION_ID;
 
         END IF;
+        
     END UPDATE_APPLICATION_STATUS;
+
+    FUNCTION VALIDATE_STATUS_ENTRY(
+        P_NEW_STATUS VARCHAR2
+    ) RETURN VARCHAR2
+    IS
+    BEGIN
+        IF P_NEW_STATUS NOT IN
+            ('Applied', 'Interview', 'Rejected', 'Offer', 'Accepted')
+        THEN
+            RAISE_APPLICATION_ERROR(-20001,'Invalid application status');
+        END IF;
 
         RETURN P_NEW_STATUS;
 
